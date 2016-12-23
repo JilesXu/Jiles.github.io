@@ -1,1 +1,4 @@
 协议和代理的回调也是一种很好的传值方式。
+举个例子，两个类之间的传值，类A调用类B的方法，类B在执行过程中遇到问题通知类A，这时候我们需要用到代理。
+当然闭包也是可以解决此类的问题。就拿文章“swift3.0-闭包”中相同的例子来解释：
+需要将secondViewController中textfield上的内容反应给firstViewCOntroller的label上。
