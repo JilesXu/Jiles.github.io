@@ -79,4 +79,17 @@ if let imageSize = size {
     print("This image hasn't been set.")
 }
 
+
+/**********Tips**********/
+1.页面间传值时不能带“?”，否则会造成传值不成功
+例：当页面A向页面B正向传值时
+页面A：
+        let editViewController: DelegateEditViewController = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DelegateEditViewController") as! DelegateEditViewController
+        editViewController.personOldName = "Jiles"
+        print(editViewController.personOldName)
+        self.navigationController?.pushViewController(editViewController, animated: true)
+        打印：Optional("Jiles")
+        
+页面B中的定义：
+        var personOldName:String?
 end
