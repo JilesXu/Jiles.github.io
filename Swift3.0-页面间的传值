@@ -107,7 +107,7 @@ var delegate: EditViewControllerDelegate?
         /*****方法二：闭包*****/
         editViewController.setNameByClosureType(inputClosure: {
             (inputText: String) -> Void in
-                currentSelectCell!.myLabel.text = inputText
+            self.fetchPersonName(name: inputText)
         })
         
         if currentSelectCell != nil {
