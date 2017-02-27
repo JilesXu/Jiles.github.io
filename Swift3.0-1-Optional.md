@@ -6,11 +6,11 @@ Optional是swift中的一种类型，既可以是一个值也可以为空（nil�
 1.当一些类的属性值可以为空时；例如：Person类中的name，age可以为空时，可定义为var name : string? 
 
 2.当一个方法可以返回空值时；例如：官方的例子
-//try to convert a String into an Int
+`//try to convert a String into an Int
 let possibleNumber = "123"
 let convertedNumber = Int(possibleNumber)
 // convertedNumber is inferred to be of type "Int?", or "optional Int"
-// 如果possibleNumber 是“hello”,则转换不会成功，就会返回nil
+// 如果possibleNumber 是“hello”,则转换不会成功，就会返回nil`
 
 ##Optional Binding
 在swift中Optional值不能被当作boolean值处理
