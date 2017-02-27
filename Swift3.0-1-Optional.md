@@ -1,4 +1,5 @@
-/**********什么是Optional**********/
+#Optional
+##什么是Optional
 Optional是swift中的一种类型，既可以是一个值也可以为空（nil）。他其实是一个enum，包含none和some。
 在某些场景Optional会启到很好的作用。
 
@@ -11,7 +12,7 @@ let convertedNumber = Int(possibleNumber)
 // convertedNumber is inferred to be of type "Int?", or "optional Int"
 // 如果possibleNumber 是“hello”,则转换不会成功，就会返回nil
 
-/**********Optional Binding**********/
+##Optional Binding
 在swift中Optional值不能被当作boolean值处理
 例：这段代码会报错
 var name : string? = "Jiles"
@@ -36,7 +37,7 @@ if let myName = name {
 }
 打印：Jiles
 
-/**********隐式解包Optional**********/
+##隐式解包Optional
 相较于普通的Optional值，隐式解包Optional对它的成员或者方法进行访问时，编译器会自动进行解包。
 通过在类型后面添加“!”来告诉编译器这是一个隐式解包Optional：
 var  name : String! = "Jiles"
@@ -50,7 +51,7 @@ print(name)
 这一切都是历史的锅。因为Object-C中Cocoa的所有类型变量都是可以指向nil的，有一部分Cocoa的API中在参数或者返回时即使被声明为具体的类型，但是还是可能在某些特定的情况下是nil, 而同时也有另一部分API永远不会接受或者返回nil。在Objective-C时，这两种情况并没有加以区别，因为在OC中向nil发送消息是允许的，结果就是什么都不会发生，而在Cocoa API从OC转为Swift的module声明的自动化工具里，是无法判定是否存在nil的可能的，因此也无法决定哪些类型应该是实际的类型，而哪些类型应该声明为Optional。
 在这种自动化转换中，最简单粗暴的应对方式是全部转为 Optional，然后让使用者通过 Optional Binding 来判断并使用。虽然这是最安全的方式，但对使用者来说是一件非常麻烦的事情，我猜不会有人喜欢每次用个 API 就在 Optional 和普通类型之间转来转去。这时候，隐式解包的 Optional 就作为一个妥协方案出现了。使用隐式解包 Optional 的最大好处是对于那些我们能确认的 API 来说，我们可直接进行属性访问和方法调用，会很方便。但是需要牢记在心的是，隐式解包不意味着 “这个变量不会是 nil，你可以放心使用” 这种暗示，只能说 Swift 通过这个特性给了我们一种简便但是危险的使用方式罢了。
 
-/**********Optional Chaining**********/
+##Optional Chaining
 我们可以通过一个链来安全的访问一个Optional的属性或者方法。
 例：
 myImageView.image?.size
@@ -80,7 +81,7 @@ if let imageSize = size {
 }
 
 
-/**********Tips**********/
+##Tips
 1.页面间传值时不能带“?”，否则会造成传值不成功
 例：当页面A向页面B正向传值时
 页面A：
