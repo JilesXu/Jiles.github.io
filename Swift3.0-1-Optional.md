@@ -3,13 +3,15 @@
 Optional是swift中的一种类型，既可以是一个值也可以为空（nil）。他其实是一个enum，包含none和some。
 在某些场景Optional会启到很好的作用。
 
-1.当一些类的属性值可以为空时；例如：Person类中的name，age可以为空时，可定义为var name : string? 
+1.当一些类的属性值可以为空时；例如：Person类中的name，age可以为空时，可定义为`var name : string? `
 
 2.当一个方法可以返回空值时；例如：官方的例子
 ```
 //try to convert a String into an Int
+
 let possibleNumber = "123"
 let convertedNumber = Int(possibleNumber)
+
 // convertedNumber is inferred to be of type "Int?", or "optional Int"
 // 如果possibleNumber 是“hello”,则转换不会成功，就会返回nil
 ```
@@ -33,10 +35,11 @@ if name != nil {
 
 上述的两个`print`并不相同，一个是`name`一个是`name!`
 通过Log可以看出区别：
-```
-print(name)打印：Optional("Jiles")
-print(name!)打印：Jiles
-```
+`print(name)`
+打印：Optional("Jiles")
+`print(name!)`
+打印：Jiles
+
 所以当我们确定name中包含值的时候可以使用`!`强制解包，获取Optional内包含的值。
 
 但是Swift提供了一种更加方便的形式来完成这一过程:Optional Binding
@@ -55,6 +58,7 @@ var  name : String! = "Jiles"
 print(name)
 ```
 打印：Jiles
+
 隐式解包的Optional与普通的Optional本质上没有差别，只是在访问时，编译器会自动帮我们完成在变量后插入`!`的行为。
 
 那么此处会有一个问题，当访问一个值为空的隐式Optional时，就会遇到一个runtime error。
