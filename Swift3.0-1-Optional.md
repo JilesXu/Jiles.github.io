@@ -35,9 +35,13 @@ if name != nil {
 
 上述的两个`print`并不相同，一个是`name`一个是`name!`
 通过Log可以看出区别：
+
 `print(name)`
+
 打印：Optional("Jiles")
+
 `print(name!)`
+
 打印：Jiles
 
 所以当我们确定name中包含值的时候可以使用`!`强制解包，获取Optional内包含的值。
