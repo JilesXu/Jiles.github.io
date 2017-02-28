@@ -5,7 +5,7 @@
 
 当然闭包也是可以解决此类的问题。下面通过一个例子，将闭包和协议代理的回调传值做一个对比。
 
-一个tableView，其中的每个cell都包含一个label，点击cell后可以进入下一级页面，页面2中有一个textField，textField中显示有之前的label值，更改textField中的值后返回tabelView，此时对应cell中的label值随之变化。
+- 一个tableView，其中的每个cell都包含一个label，点击cell后可以进入下一级页面，页面2中有一个textField，textField中显示有之前的label值，更改textField中的值后返回tabelView，此时对应cell中的label值随之变化。
 
 这次我们只关注页面间的传值，其他的一笔带过就好。
 
