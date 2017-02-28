@@ -18,12 +18,13 @@
 他的函数类型就是`(String)->(void)`
 函数类型在构建函数的时候当成参数类型或者返回值类型来使用
     
-- 函数声明中包含外部参数名和内部参数名，外部参数名是用来说明用的(不必须)，内部参数名是函数内部使用的(必须)，“_”可以表示没有外部参数名称。
+- 函数声明中包含外部参数名和内部参数名，外部参数名是用来说明用的(**不必须**)，内部参数名是函数内部使用的(**必须**)，“_”可以表示没有外部参数名称。
 
 如果开发者不设置函数中参数的外部名称，则全部参数都默认外部名称和内部名称相同.
 
 例：
-  var name : String?
+```
+  var name : String?
   var age : Int?
   func printNameAndAge(with myName:String?, _ myAge:Int?) -> Void {
         print("\(myName!) is \(myAge!) years old.")
@@ -31,10 +32,12 @@
   name = "Jiles"
   age = 20
   printNameAndAge(with: name, age)
-  注：swift3.0开始函数的第一个内部参数不再可以省略，在函数调用时参数必须写全
-  
-3.当函数需要返回多个值的时候，可以使用元组来返回
-  func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
+```
+  **注：swift3.0开始函数的第一个内部参数不再可以省略，在函数调用时参数必须写全**
+
+- 当函数需要返回多个值的时候，可以使用元组来返回
+```
+func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
         var min = scores[0]
         var max = scores[0]
         var sum = 0
@@ -52,8 +55,8 @@
   let statistics = caculateStatistics(scores:[5,3,100,3,9])
   print(statistics.min)
   print(statistics.1)
+  ```
   打印：3 100
-
 4.一个函数可以将另一个函数作为返回值返回
   func makeIncrementer() -> ( (Int) -> Int ) {
        //(Int) -> Int 表示返回函数的参数类型和返回类型
