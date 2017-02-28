@@ -54,8 +54,8 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
   }
   let statistics = caculateStatistics(scores:[5,3,100,3,9])
   print(statistics.min)
-  print(statistics.1)
-  ```
+  print(statistics.1)
+```
   打印：3 100
 
 - 一个函数可以将另一个函数作为返回值返回
