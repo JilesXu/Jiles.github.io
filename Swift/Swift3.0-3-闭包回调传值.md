@@ -1,16 +1,10 @@
-在现实项目中经常会遇到navigation中将secondViewController中的值回传给firstViewController的情况，
-闭包回调传值是一个不错的方法。
+#闭包回调传值
+在现实项目中经常会遇到navigation中将secondViewController中的值回传给firstViewController的情况，闭包回调传值是一个不错的方法。
+
 用一个例子来说明这个问题：
-有一个navigationcontroller，其中有firstViewController和secondViewController
-
-firstViewController中有一个label和一个button
-label显示从secondViewController回传回来的内容
-点击button进入secondViewController
-
-secondViewController中有一个textField和一个button
-textField中可以输入任何内容
-点击button后返回firstViewController并将textfield中的内容带回显示在label上
-
+有一个navigationcontroller，其中有firstViewController和secondViewController。firstViewController中有一个label和一个button，label显示从secondViewController回传回来的内容，点击button进入secondViewController，secondViewController中有一个textField和一个button
+textField中可以输入任何内容，点击button后返回firstViewController并将textfield中的内容带回显示在label上。
+```
     @IBAction func goSecondViewBtnPressed(_ sender: UIButton) {
         let secondVC =  UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "BlockSecondViewController") as! BlockSecondViewController
         secondVC.setBackClosure(tempClosure: {
@@ -19,6 +13,7 @@ textField中可以输入任何内容
         })
         self.navigationController?.pushViewController(secondVC, animated: true)
     }
+```
 这里secondVC.setBackClosure就是要实现其提供的闭包回调，以便接受回传过来的值。
 即向secondViewController中传入闭包的具体内容，包体中的内容不立即执行，而是等待下一个页面调用时再执行。
 形象但是不准确的说就是这里的包体就是一台手机，而secondViewController中定义的函数类型就是手机壳。这里就是将手机放入了手机壳中。
