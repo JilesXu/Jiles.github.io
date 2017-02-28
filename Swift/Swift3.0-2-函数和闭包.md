@@ -195,16 +195,16 @@ map的闭包是作为函数参数传入的，Swift可以做类型推断。
 
 正常闭包：
 ```
-        secondVC.setBackClosure(tempClosure: {
-            (inputText:String)->Void in
-            self.showTextLabel.text = inputText
-        })
+   secondVC.setBackClosure(tempClosure: {
+       (inputText:String)->Void in
+       self.showTextLabel.text = inputText
+   })
 ```
 尾随闭包：
 ```
-        secondVC.setBackClosure() {
-            (inputText:String)->Void in
-            self.showTextLabel.text = inputText
-        }
+    secondVC.setBackClosure() {
+        (inputText:String)->Void in
+        self.showTextLabel.text = inputText
+    }
 ```
 end
