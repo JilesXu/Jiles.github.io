@@ -94,9 +94,11 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
 打印：true
 
 - 可变参数函数
+
 可变参数函数是指函数可以接收不固定个参数。
-在参数类型后面添加 … 来标记这个参数为可变参数。
+在参数类型后面添加`…`来标记这个参数为可变参数。
 可以在函数中像访问数组一样访问可变参数。
+
 例：
 ```
    func foo(names:String...) ->() {
@@ -105,28 +107,34 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
         }
     }
     foo(names: "zhao","zhang","wang")
-````
+```
 - In-out 参数函数
- 传入函数的参数值只能在函数域内改变。
- 参数传递是值传递，也就是说我们在函数内部修改了一个参数的值，在函数结束后，函数外部访问到的参数值还是传入函数之前的值，它并没有随着函数内的修改而改变。
- 我们需要inout 关键字来标记要修改的参数。
- 例：
-    func swapTwoInts( a: inout Int, b: inout Int) {
-        let temporaryA = a
-        a = b
-        b = temporaryA
-    }
-    var firstNumber = 3
-    var secondNumber = 107
-    swapTwoInts(a: &firstNumber, b: &secondNumber)
-    print(firstNumber)
-    print(secondNumber)
-    打印：107 3
-    
-/**********闭包**********/
+
+传入函数的参数值只能在函数域内改变。
+参数传递是值传递，也就是说我们在函数内部修改了一个参数的值，在函数结束后，函数外部访问到的参数值还是传入函数之前的值，它并没有随着函数内的修改而改变。
+我们需要inout 关键字来标记要修改的参数。
+
+例：
+```
+  func swapTwoInts( a: inout Int, b: inout Int) {
+      let temporaryA = a
+      a = b
+      b = temporaryA
+  }
+  var firstNumber = 3
+  var secondNumber = 107
+  swapTwoInts(a: &firstNumber, b: &secondNumber)
+  print(firstNumber)
+  print(secondNumber)
+```
+打印：107 3
+    
+##闭包
 闭包其实就是匿名函数，函数是闭包的一种特殊形式
 简书上作者sipdar 是这样说的
-1.全局函数是一个有名字但不会捕获任何值的闭包
+
+简书上作者sipdar 是这样说的
+>1.全局函数是一个有名字但不会捕获任何值的闭包
 2.内嵌函数是一个有名字可以捕获到所在的函数域内值的闭包
 3.闭包表达式是一个没有名字的可以捕获上下文中的变量或者常量的闭包
 
