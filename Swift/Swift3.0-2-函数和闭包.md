@@ -57,7 +57,9 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
   print(statistics.1)
   ```
   打印：3 100
-4.一个函数可以将另一个函数作为返回值返回
+
+- 一个函数可以将另一个函数作为返回值返回
+```
   func makeIncrementer() -> ( (Int) -> Int ) {
        //(Int) -> Int 表示返回函数的参数类型和返回类型
        func addOne(number:Int) ->Int {
@@ -68,10 +70,12 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
   let number = makeIncrementer() // 返回的是addOne函数
   let res = number(7)
   print(res)
-  打印：8
+```
+打印：8
 
-5.一个函数可以用其他函数作为参数
-    func hasAnyMatches(list: [Int], condition:(Int)->Bool) -> Bool {
+- 一个函数可以用其他函数作为参数
+```
+  func hasAnyMatches(list: [Int], condition:(Int)->Bool) -> Bool {
         for item in list {
             if condition(item) {
                 return true
@@ -86,21 +90,23 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
     //只要number数组有一个元素小于10就返回true
     let isLessTen = hasAnyMatches(list:numbers,condition:lessThanTen)
     print(isLessTen) 
-    打印：true
+```
+打印：true
 
-6.可变参数函数
+- 可变参数函数
 可变参数函数是指函数可以接收不固定个参数。
 在参数类型后面添加 … 来标记这个参数为可变参数。
 可以在函数中像访问数组一样访问可变参数。
 例：
-    func foo(names:String...) ->() {
+```
+   func foo(names:String...) ->() {
         for name in names {
             print("\(name)")
         }
     }
-    foo(names: "zhao","zhang","wang")
-    
- 7.In-out 参数函数
+    foo(names: "zhao","zhang","wang")
+````
+- In-out 参数函数
  传入函数的参数值只能在函数域内改变。
  参数传递是值传递，也就是说我们在函数内部修改了一个参数的值，在函数结束后，函数外部访问到的参数值还是传入函数之前的值，它并没有随着函数内的修改而改变。
  我们需要inout 关键字来标记要修改的参数。
