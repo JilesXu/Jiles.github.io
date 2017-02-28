@@ -135,56 +135,76 @@ func caculateStatistics(scores:[Int])->(min:Int,max:Int,sum:Int) {
 
 简书上作者sipdar 是这样说的
 >1.全局函数是一个有名字但不会捕获任何值的闭包
-2.内嵌函数是一个有名字可以捕获到所在的函数域内值的闭包
-3.闭包表达式是一个没有名字的可以捕获上下文中的变量或者常量的闭包
+
+>2.内嵌函数是一个有名字可以捕获到所在的函数域内值的闭包
+
+>3.闭包表达式是一个没有名字的可以捕获上下文中的变量或者常量的闭包
 
 闭包的声明
-    var myClosure : ((Int, Int) -> Int)?
+```
+var myClosure : ((Int, Int) -> Int)?
+```
 给闭包变量赋值，其实就是把一个函数体赋值给一个函数类型的变量，和函数的定义区别不大。
 但是给闭包变量赋值的函数体中含有参数列表，并且参数列表和真正的函数体之间使用关键字in来分割。
-闭包可选变量的调用方式与普通函数没什么两样，唯一不同的是这个函数需要用!来强制打开才可以使用。例：   
+闭包可选变量的调用方式与普通函数没什么两样，唯一不同的是这个函数需要用!来强制打开才可以使用。
+
+例：
+```
     myClosure = { (num1:Int, num2:Int) -> Int in
         return num1 + num2
     }
     print(myClosure!(1, 2))
-    打印：3
+```
+打印：3
     
 简而言之闭包是以{}包围，函数类型()->()定义的代码模块，并以关键字in来隔离包头和包体
+
 以数组map为例：
+```
     let names = ["zhao","wang","Li"]
     let array = names.map({
         (name:String) -> String in
         "\(name) has been map !"
     })
     print(array)
-    打印：["zhao has been map !", "wang has been map !", "Li has been map !"]
+```   
+打印：["zhao has been map !", "wang has been map !", "Li has been map !"]
 
-已知参数类型的闭包
+- 已知参数类型的闭包
 map的闭包是作为函数参数传入的，Swift可以做类型推断。
 所以就不需要在闭包中在描述闭包的函数类型
-也就是可以省略 (String) -> (String) 部分，来简写闭包表达式
+也就是可以省略 `(String) -> (String)` 部分，来简写闭包表达式
+
 用上面的例子：
+```
     let array = names.map({
         name in
         "\(name) has been map !"
     })
-    
-闭包跟函数是引用类型    
+```
+
+- 闭包跟函数是引用类型    
 无论将函数/闭包赋值给一个常量还是变量，实际上都是将常量/变量的值设置为对应函数/闭包的引用。这也意味着如果将闭包赋值给了两个不同的常量/变量，两个值都会指向同一个闭包.
 
-/**********尾随闭包**********/
+###尾随闭包
 如果需要将一个很长的闭包表达式作为最后一个参数传递给函数，可以使用尾随闭包来增强函数的可读性。
 尾随闭包是一个书写在函数括号之后的闭包表达式，函数支持将其作为最后一个参数调用。
 在使用尾随闭包时，你不用写出它的参数标签。
+
 例：
+
 正常闭包：
+```
         secondVC.setBackClosure(tempClosure: {
             (inputText:String)->Void in
             self.showTextLabel.text = inputText
         })
+```
 尾随闭包：
+```
         secondVC.setBackClosure() {
             (inputText:String)->Void in
             self.showTextLabel.text = inputText
         }
+```
 end
