@@ -42,4 +42,37 @@ NSThread是苹果封装过的面向对象的多线程方案，但是仍然需要
 ```
 let queue = DispatchQueue.main
 ```
-- 自己创建队列：
+- 全局队列
+在iOS < 8之前我们有四种优先级的全局队列，他们分别是：
+```
+#define DISPATCH_QUEUE_PRIORITY_HIGH         2  
+#define DISPATCH_QUEUE_PRIORITY_DEFAULT      0  
+#define DISPATCH_QUEUE_PRIORITY_LOW          (-2)  
+#define DISPATCH_QUEUE_PRIORITY_BACKGROUND   INT16_MIN
+```
+在iOS >= 8 之后，优先级的概念被苹果使用QoS替代了，Swift3中也一样。我们不再使用优先级，而是使用QoS来描述全局队列。简单地说，这两者之间的对应关系是这样的：
+
+Priority(优先级) | DispatchQoS
+------------ | ------------
+DISPATCH_QUEUE_PRIORITY_HIGH | .userInitiated
+DISPATCH_QUEUE_PRIORITY_DEFAULT | .default
+DISPATCH_QUEUE_PRIORITY_LOW | .utility
+DISPATCH_QUEUE_PRIORITY_BACKGROUND | .background
+
+在 Swift 3 中，获取全局队列需要使用这个方法：
+```
+let queueGlobal = DispatchQueue.global(qos: .userInitiated)
+```
+我们将 QoS 传入 global() 方法，实际上就像指定它的优先级。当然也可以不指定，默认就是default。
+```
+let queueGlobal = DispatchQueue.global() //即DispatchQueue.global(qos: .default)
+```
+- 自己创建队列：既可以是串型队列也可以是并行队列
+串型队列直接使用`init`函数
+```
+let queue1 = DispatchQueue.init(label: "queue1"）
+```
+`init`函数中还可以添加其他的参数，如果想要创建并行队列，就可以在`attributes`中添加`.concurrent`
+```
+let queue1 = DispatchQueue.init(label: "queue1", qos: .default, attributes:.concurrent)
+```
