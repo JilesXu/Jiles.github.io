@@ -2,6 +2,7 @@
 - NSThread
 - GCD
 - NSOperation & NSOperationQueue
+
 ##NSThread
 NSThread是苹果封装过的面向对象的多线程方案，但是仍然需要我们自己管理线程的生命周期。
 ###创建并启动
