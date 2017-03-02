@@ -104,7 +104,7 @@ Hello World
 
 **为了更好的理解同步和异步，和各种队列的使用，下面看两个示例**：
 
-示例一：
+- 示例一：
 ```
         print("之前**********/\(Thread.current)")
         DispatchQueue.main.sync {
@@ -116,9 +116,91 @@ Hello World
 
 **结果**：只会打印第一句：`之前**********/<NSThread: 0x600000075740>{number = 1, name = main}`，然后主线程就卡死了，在界面上放一个按钮，就会发现点不了了。
 
-**解释**：
+**分析**：
 同步任务会阻塞当前线程，然后把闭包中的任务放到指定的队列中执行，只有等到闭包中的任务完成后才会让当前线程继续往下运行。
 那么这里的步骤就是：打印完第一句后，`.sync`立即阻塞当前的主线程，然后把闭包中的任务放到`.main`的队列中，可是`.main`中的任务会被取出来放到主线程中执行，但主线程这个时候已经被阻塞了，所以闭包中的任务就不能完成，它不完成，`.sync`就会一直阻塞主线程，这就是死锁现象，导致主线程一直卡死。
 
 简而言之：`.sync`阻塞主线程->闭包中的任务放入队列`.main`->队列`.main`放入主线程运行->主线程已阻塞等待闭包中的任务完成->死循环
 
+- 示例二
+```
+        let queue4 = DispatchQueue.init(label: "queue4")
+        print("之前**********/\(Thread.current)")
+        queue4.async {
+            print("sync之前**********/\(Thread.current)")
+            queue4.sync {
+                print("sync**********/\(Thread.current)")
+            }
+            print("sync之后**********/\(Thread.current)")
+        }
+        print("之后**********/\(Thread.current)")
+```
+**结果**：
+```
+之前**********/<NSThread: 0x60800007c500>{number = 1, name = main}
+之后**********/<NSThread: 0x60800007c500>{number = 1, name = main}
+sync之前**********/<NSThread: 0x600000277400>{number = 3, name = (null)}
+
+```
+很明显`sync`和`sync之后`没有被打印出来，这是为什么呢？
+
+**分析**
+1. `let queue4 = DispatchQueue.init(label: "queue4")`是一个串型队列
+2. 打印`之前**********/<NSThread: 0x60800007c500>{number = 1, name = main}`
+3. `queue4.async`所以当前线程不会被阻塞，于是有了两条线程，一条当前线程A继续往下打印`之后**********/<NSThread: 0x60800007c500>{number = 1, name = main}`, 另一条线程B执行闭包中的内容打印`sync之前**********/<NSThread: 0x600000277400>{number = 3, name = (null)}`。
+4. 接着`.sync`同步执行，于是它所在的线程B会被阻塞，一直等到`sync`里的任务执行完才会继续往下。于是`sync`就高兴的把自己闭包中的任务放到`queue4`中，可谁想`queue4`是一个串行队列，一次执行一个任务，所以`.sync`的闭包必须等到前一个任务执行完毕，可是`queue4`正在执行的任务就是被`.sync`阻塞了的那个。于是又发生了死锁。所以`.sync`所在的线程被卡死了。剩下的两句代码自然不会打印。
+
+4. 接着`.sync`同步执行，于是它所在的线程B会被阻塞，一直等到`sync`里的任务执行完才会继续往下。于是`sync`就把自己闭包中的任务放到`queue4`中，可`queue4`是一个串行队列，一次执行一个任务，所以`.sync`的闭包必须等到前一个任务执行完毕，可是`queue4`正在执行的任务就是被`.sync`阻塞了的那个。于是又发生了死锁。所以`.sync`所在的线程被卡死了。剩下的两句代码自然不会打印。
+```
+        let queue4 = DispatchQueue.init(label: "queue4", attributes: .concurrent)
+        print("之前**********/\(Thread.current)")
+        queue4.async {
+            print("sync之前**********/\(Thread.current)")
+            queue4.sync {
+                print("sync**********/\(Thread.current)")
+            }
+            print("sync之后**********/\(Thread.current)")
+        }
+        print("之后**********/\(Thread.current)")
+```
+如上将`queue4`改成并行队列后，结果如下：
+```
+之前**********/<NSThread: 0x608000077840>{number = 1, name = main}
+sync之前**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
+之后**********/<NSThread: 0x608000077840>{number = 1, name = main}
+sync**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
+sync之后**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
+```
+###延时执行
+之前在GCD中，想要指派一个任务延时执行，需要写的代码十分复杂。在swift3中很简洁。
+```
+        let delay = DispatchTime.now() + 3
+    
+        DispatchQueue.main.asyncAfter(deadline: delay) {
+            print(Thread.current)
+            print("hello world")
+        }
+```
+下面是常用的GCD模板在Swift 3中的写法，仅供参考。
+```
+全局队列异步
+DispatchQueue.global().async {
+    //想做的事
+    DispatchQueue.main.async {
+    //返回主线程
+    }
+}
+```
+```
+延时操作，注意这里的单位是秒
+DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.5) {
+    // 你想做啥
+}
+```
+```
+创建队列同步
+let queue = DispatchQueue(label: "queue")
+queue.sync {
+    print("Hello World")
+}
+```
