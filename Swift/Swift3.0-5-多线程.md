@@ -76,3 +76,44 @@ let queue1 = DispatchQueue.init(label: "queue1"）
 ```
 let queue1 = DispatchQueue.init(label: "queue1", qos: .default, attributes:.concurrent)
 ```
+###任务
+在Swift3中指派任务只需要在所指定的队列后使用相应的方法（.sync、.async），然后使用闭包传入任务即可。
+- 同步任务:会阻塞当前线程 (SYNC)
+```
+let queue2 = DispatchQueue.init(label: "queue2")
+queue2.sync {
+    print("Hello World")
+}
+print("Hello")        
+```
+打印：
+Hello World
+Hello
+
+- 异步任务：不会阻塞当前线程 (ASYNC)
+```        
+let queue3 = DispatchQueue(label: "queue3")
+queue3.async {
+    print("Hello World")
+}
+print("Hello")
+```
+打印：
+Hello
+Hello World
+
+**为了更好的理解同步和异步，和各种队列的使用，下面看两个示例**：
+
+示例一：
+```
+        print("之前**********/\(Thread.current)")
+        DispatchQueue.main.sync {
+            print("sync**********/\(Thread.current)")
+        }
+        print("之后**********/\(Thread.current)")
+```
+以上代码在主线程调用，结果是什么？
+
+**结果**：只会打印第一句：之前 `之前**********/<NSThread: 0x600000075740>{number = 1, name = main}`，然后主线程就卡死了，在界面上放一个按钮，就会发现点不了了。
+
+**解释**：
