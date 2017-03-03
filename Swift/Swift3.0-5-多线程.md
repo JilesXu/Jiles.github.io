@@ -186,6 +186,75 @@ sync之后**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
             print("hello world")
         }
 ```
+###队列组
+队列组可以将很多队列添加到一个组里，这样做的好处是，当这个组里所有的任务都执行完了，队列组会通过一个方法通知我们。
+```
+        //队列组
+        let group = DispatchGroup.init()
+        let queue5 = DispatchQueue.global()
+        
+        queue5.async(group: group, qos: .default) { 
+            for _ in 0..<3 {
+                NSLog("group-01 - %@", Thread.current)
+            }
+        }
+        DispatchQueue.main.async(group: group) { 
+            for _ in 0..<2 {
+                NSLog("group-02 - %@", Thread.current)
+            }
+        }
+        group.notify(queue: DispatchQueue.main) { 
+            print("完成*****\(Thread.current)")
+        }
+```
+最后打印的结果是：
+```
+2017-03-03 22:07:42.962 swiftBasic[8548:520029] group-01 - <NSThread: 0x60000007f640>{number = 3, name = (null)}
+2017-03-03 22:07:42.963 swiftBasic[8548:520029] group-01 - <NSThread: 0x60000007f640>{number = 3, name = (null)}
+2017-03-03 22:07:42.963 swiftBasic[8548:520029] group-01 - <NSThread: 0x60000007f640>{number = 3, name = (null)}
+2017-03-03 22:07:42.978 swiftBasic[8548:519943] group-02 - <NSThread: 0x6080000664c0>{number = 1, name = main}
+2017-03-03 22:07:42.979 swiftBasic[8548:519943] group-02 - <NSThread: 0x6080000664c0>{number = 1, name = main}
+完成*****<NSThread: 0x6080000664c0>{number = 1, name = main}
+```
+##NSOperation和NSOperationQueue
+NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起来更好理解。`NSOperation`和`NSOperationQueue`分别对应GCD的`任务`和`队列`。操作步骤也很好理解：
+1. 将要执行的任务封装到一个`NSOperation`对象中。
+2. 将此任务添加到一个`NSOperationQueue`对象中。
+
+###添加任务
+`NSOperation`只是一个抽象类，所以不能封装任务。但它有2个子类用于封装任务。分别是：`NSInvocationOperation`和`NSBlockOperation`。创建一个 Operation后，需要调用`start`方法来启动任务，它会默认在当前队列**同步执行**。当然你也可以在中途取消一个任务，只需要调用其`cancel`方法即可。
+
+- BlockOperation
+```
+        let operation = BlockOperation.init { 
+            print(Thread.current)
+        }
+        
+        operation.start()
+```
+之前说过这样的任务，默认会在当前线程执行。但是`NSBlockOperation`还有一个方法`addExecutionBlock:`，通过这个方法可以给`Operation`添加多个执行 Block。这样`Operation`中的任务会并发执行，它会在主线程和其它的多个线程执行这些任务，注意下面的打印结果：
+```
+        let operation = BlockOperation.init { 
+            print(Thread.current)
+        }
+        for i in 0..<5 {
+            operation.addExecutionBlock {
+                print("第\(i)次*****\(Thread.current)")
+            }
+        }
+        
+        operation.start()
+```
+打印：
+```
+<NSThread: 0x60800007da00>{number = 1, name = main}
+第3次*****<NSThread: 0x60800007da00>{number = 1, name = main}
+第1次*****<NSThread: 0x608000272f40>{number = 5, name = (null)}
+第2次*****<NSThread: 0x608000272d80>{number = 4, name = (null)}
+第0次*****<NSThread: 0x600000271a00>{number = 3, name = (null)}
+第4次*****<NSThread: 0x60800007da00>{number = 1, name = main}
+```
+
 下面是常用的GCD模板在Swift 3中的写法，仅供参考。
 ```
 全局队列异步
