@@ -254,6 +254,70 @@ NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起
 第0次*****<NSThread: 0x600000271a00>{number = 3, name = (null)}
 第4次*****<NSThread: 0x60800007da00>{number = 1, name = main}
 ```
+###创建队列
+我们可以调用一个`NSOperation`对象的`start()`方法来启动这个任务，但是这样做他们默认是**同步执行**的。就算是`addExecutionBlock`方法，也会在**当前线程和其他线程**中执行，也就是说还是会占用当前线程。这是就要用到队列`NSOperationQueue`了。而且，按类型来说的话一共有两种类型：主队列、其他队列。只要添加到队列，会自动调用任务的`start()`方法.
+
+- 主队列
+
+添加到主队列的任务都会一个接一个地排着队在主线程处理。
+```
+        let queue6 = OperationQueue.main
+```
+
+- 其他队列
+
+因为主队列比较特殊，所以会单独有一个类方法来获得主队列。那么通过初始化产生的队列就是其他队列了，因为只有这两种队列，除了主队列，其他队列就不需要名字了。
+**注意：其他队列的任务会在其他线程并行执行。**
+``` 
+        let operation = BlockOperation.init { 
+            print(Thread.current)
+        }
+        for i in 0..<5 {
+            operation.addExecutionBlock { () -> Void in
+                print("第\(i)次 - \(Thread.current)")
+            }
+        }
+        queue.addOperation(operation)
+```
+打印
+```
+<NSThread: 0x60800026f0c0>{number = 3, name = (null)}
+第0次 - <NSThread: 0x60800026f1c0>{number = 4, name = (null)}
+第1次 - <NSThread: 0x600000261400>{number = 6, name = (null)}
+第2次 - <NSThread: 0x600000260dc0>{number = 5, name = (null)}
+第3次 - <NSThread: 0x60800026f0c0>{number = 3, name = (null)}
+第4次 - <NSThread: 0x60800026f1c0>{number = 4, name = (null)}
+```
+这时问题来了，将`NSOperationQueue`与`GCD的队列`相比较就会发现，这里没有串行队列，那如果我想要10个任务在其他线程串行的执行怎么办？
+
+这就是苹果封装的妙处，你不用管串行、并行、同步、异步这些名词。`NSOperationQueue`有一个参数`maxConcurrentOperationCount`最大并发数，用来设置最多可以让多少个任务同时执行。当你把它设置为`1`的时候，就是串型执行了。
+
+`NSOperationQueue`还有一个添加任务的方法`- (void)addOperationWithBlock:(void (^)(void))block;`，这是不是和`GCD`差不多？这样就可以添加一个任务到队列中了，十分方便。
+
+`NSOperation`有一个非常实用的功能，那就是添加依赖。比如有3个任务：A:从服务器上下载一张图片，B：给这张图片加个水印，C：把图片返回给服务器。这时就可以用到依赖了:
+```
+        let queue7 = OperationQueue.init()
+        let operation1 = BlockOperation.init { 
+            print("下载图片")
+            Thread.sleep(forTimeInterval: 1.0)
+        }
+        
+        let operation2 = BlockOperation.init { 
+            print("打水印")
+            Thread.sleep(forTimeInterval: 1.0)
+        }
+        
+        let operation3 = BlockOperation.init { 
+            print("上传图片")
+            Thread.sleep(forTimeInterval: 1.0)
+        }
+        
+        operation2.addDependency(operation1)
+        operation3.addDependency(operation2)
+        
+        queue7.addOperations([operation1, operation2, operation3], waitUntilFinished: false)
+```
+**注意：可以在不同的队列之间依赖，依赖是添加到任务身上的，和队列没关系。**
 
 下面是常用的GCD模板在Swift 3中的写法，仅供参考。
 ```
