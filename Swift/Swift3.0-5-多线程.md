@@ -1,4 +1,8 @@
 #多线程
+
+>首先感谢**伯恩的遗产**博客对我多线程学习的帮助
+>根据[这篇](http://www.jianshu.com/p/0b0d9b1f1f19)博客学习整理下来受益颇大
+
 - NSThread
 - GCD
 - NSOperation & NSOperationQueue
