@@ -298,6 +298,7 @@ NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起
 
 `NSOperationQueue`还有一个添加任务的方法`- (void)addOperationWithBlock:(void (^)(void))block;`，这是不是和`GCD`差不多？这样就可以添加一个任务到队列中了，十分方便。
 
+###添加依赖
 `NSOperation`有一个非常实用的功能，那就是添加依赖。比如有3个任务：A:从服务器上下载一张图片，B：给这张图片加个水印，C：把图片返回给服务器。这时就可以用到依赖了:
 ```
         let queue7 = OperationQueue.init()
@@ -322,6 +323,100 @@ NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起
         queue7.addOperations([operation1, operation2, operation3], waitUntilFinished: false)
 ```
 **注意：可以在不同的队列之间依赖，依赖是添加到任务身上的，和队列没关系。**
+
+##线程同步
+所谓线程同步就是为了防止多个线程抢夺同一个资源造成的数据安全问题，所采取的一种措施。
+
+- 互斥锁 ：给需要同步的代码块加一个互斥锁，就可以保证每次只有一个线程访问此代码块。
+**Objective-C**
+```
+@synchronized(self) {
+    //需要执行的代码块
+}
+```
+**Swift**
+```
+objc_sync_enter(self)
+//需要执行的代码块
+objc_sync_exit(self)
+```
+- 同步执行 ：我们可以使用多线程的知识，把多个线程都要执行此段代码添加到同一个串行队列，这样就实现了线程同步的概念。当然这里可以使用`GCD`和`NSOperation`两种方案。
+```
+        var lastTicket: NSInteger = 10
+        
+        let queue7 = DispatchQueue.global()
+        queue7.sync {
+            var ticket: NSInteger = lastTicket
+            [Thread .sleep(forTimeInterval: 0.1)]
+            print("\(ticket) - \([Thread .current])");
+            ticket -= 1;
+            lastTicket = ticket;
+        }
+```
+```
+  //NSOperation & NSOperationQueue
+  //重点：1. 全局的 NSOperationQueue, 所有的操作添加到同一个queue中
+  //       2. 设置 queue 的 maxConcurrentOperationCount 为 1
+  //       3. 如果后续操作需要Block中的结果，就需要调用每个操作的waitUntilFinished，阻塞当前线程，一直等到当前操作完成，才允许执行后面的。waitUntilFinished 要在添加到队列之后！
+        var lastTicket: NSInteger = 10
+        let queue8 = OperationQueue.init()
+        let operation = BlockOperation.init {
+            var ticket: NSInteger = lastTicket
+            [Thread .sleep(forTimeInterval: 0.1)]
+            print("\(ticket) - \([Thread .current])");
+            ticket -= 1;
+            lastTicket = ticket;
+        }
+        queue8.addOperations([operation], waitUntilFinished: true)
+  //后续要做的事
+```
+
+##单例模式
+实现单例的方法已经很具体了，虽然有别的方法，但是一般都是用一个标准的方法了，这里多提一下在`Objective-C`中单例的实现方法
+**Objective-C**
+```
++ (instancetype)sharedTool;
+
+@end
+
+@implementation Tool
+
+static id _instance;
+
++ (instancetype)sharedTool {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[Tool alloc] init];
+    });
+
+    return _instance;
+}
+```
+**Swift**
+```
+import UIKit
+
+class Tool: NSObject {
+    static let shareTool = Tool()
+    
+    // 私有化构造方法，阻止其他对象使用这个类的默认的'()'构造方法
+    private override init() {}
+}
+```
+##从其他线程回到主线程的方法
+我们都知道在其他线程操作完成后必须到主线程更新UI。所以，介绍完所有的多线程方案后，我们来看看有哪些方法可以回到主线程。
+- GCD
+```
+        DispatchQueue.main.async {
+            
+        }
+```
+- OperationQueue
+```
+        OperationQueue.main.addOperation {
+            
+        }
+```
 
 下面是常用的GCD模板在Swift 3中的写法，仅供参考。
 ```
