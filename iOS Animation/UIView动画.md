@@ -75,3 +75,10 @@ self.password.center.x += offset;    //password进入
 - animations：转化成动画表示的代码
 - completion：动画结束后执行的代码块
 
+##动画参数
+上面我们使用到的动画方法中有一个重要的参数options，它能让你高度的自定义动画效果。下面展示这个参数类型的值集合，你可以通过结合不同的参数来实现自己的动画：
+- Repeating
+```
+ UIViewAnimationOptionRepeat       //动画循环执行
+ UIViewAnimationOptionAutoreverse  //动画在执行完毕后会反方向再执行一次
+```
