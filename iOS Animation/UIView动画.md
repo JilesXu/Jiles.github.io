@@ -23,6 +23,8 @@ UIView动画可以设置的动画属性有:
 
 ##UIView 类方法动画
 
+![Image of Animation-UIView-1]
+(Jiles.github.io/iOS Animation/animation-UIView-1.gif)
 先来看一个例子，动画的效果基本上可以用下面的代码来概括：
 ```
 self.userName.center.x += offset;    //userName进入
