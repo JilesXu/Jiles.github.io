@@ -1,5 +1,6 @@
 #UIView动画
 >感谢Sindri的小巢的[博客](http://www.jianshu.com/p/6e326068edeb)对我学习动画的帮助
+
 iOS的动画效果一直都很棒很，给人的感觉就是很炫酷很流畅，起到增强用户体验的作用。在APP开发中实现动画效果有很多种方式，对于简单的应用场景，我们可以使用UIKit提供的动画来实现。
 
 UIView动画实质上是对Core Animation的封装，提供简洁的动画接口。
@@ -21,6 +22,7 @@ UIView动画可以设置的动画属性有:
 7. 拉伸内容(contentStretch)
 
 ##UIView 类方法动画
+
 先来看一个例子，动画的效果基本上可以用下面的代码来概括：
 ```
 self.userName.center.x += offset;    //userName进入
