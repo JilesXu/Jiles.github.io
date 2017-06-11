@@ -1,4 +1,4 @@
-#页面间的传值
+# 页面间的传值
 页面间传值的方式有很多种，正向传值不必多说，反向传值包括了协议代理和闭包。
 
 举个例子，两个类之间的传值，类A调用类B的方法，类B在执行过程中遇到问题通知类A，这时候我们需要用到代理。
@@ -48,7 +48,7 @@
         return cell
     }
 ```    
-##下面进入重点<协议代理>
+## 下面进入重点<协议代理>
  首先说协议代理的使用方法，
  
  页面A需要遵循页面B的协议，并且告诉B，他的协议，A来代理，即
@@ -109,7 +109,7 @@ var delegate: EditViewControllerDelegate?
 ```
 这样就可以实现相应的功能。
 
-##闭包
+## 闭包
 页面A
 ```
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
