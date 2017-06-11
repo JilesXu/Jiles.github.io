@@ -1,4 +1,4 @@
-#多线程
+# 多线程
 
 >首先感谢**伯恩的遗产**博客对我多线程学习的帮助
 >根据[这篇](http://www.jianshu.com/p/0b0d9b1f1f19)博客学习整理下来受益颇大
@@ -7,22 +7,22 @@
 - GCD
 - NSOperation & NSOperationQueue
 
-##NSThread
+## NSThread
 NSThread是苹果封装过的面向对象的多线程方案，但是仍然需要我们自己管理线程的生命周期。
-###创建并启动
+### 创建并启动
 例子中还为当前线程命名方便使用`Thread.current`查看当前所在线程
 ```
   let thread = Thread.init(target: self, selector: #selector(run), object: nil)
   thread.name = "thread1"
   thread.start()
 ```
-###创建并自动启动
+### 创建并自动启动
 ```
   Thread.detachNewThreadSelector(#selector(run), toTarget: self, with: nil)
 ```
-##GCD
+## GCD
 **Grand Central Dispatch**它是苹果为多核的并行运算提出的解决方案，所以会自动合理地利用更多的CPU内核（比如双核、四核），最重要的是它会自动管理线程的生命周期（创建线程、调度任务、销毁线程），完全不需要我们管理，我们只需要告诉干什么就行。由于使用了Block即闭包，使得使用起来更加方便，而且灵活。所以基本上大家都使用GCD这套方案，老少咸宜，实在是居家旅行、杀人灭口，必备良药。
-###任务和队列
+### 任务和队列
 在GCD中有两个很重要的概念**任务**和**队列**
 - 任务：就是我想要完成的功能，我想要做的事情。在GCD中就是一个Block，所以添加任务十分方便。任务有两种执行方式：**同步执行**和**异步执行**，他们之间的区别是**是否会阻塞当前线程，直到 Block 中的任务执行完毕**。
 
@@ -40,7 +40,7 @@ NSThread是苹果封装过的面向对象的多线程方案，但是仍然需要
 串行队列 | 当前线程，一个一个执行 | 其他线程，一个一个执行
 并行队列 | 当前线程，一个一个执行 | 开很多线程，一起执行
 
-###创建队列
+### 创建队列
 - 主队列：这是一个特殊的**串行队列**。
 它用于刷新UI，任何需要刷新UI的工作都要在主队列执行，所以一般耗时的任务都要放到别的线程执行。
 ```
@@ -80,7 +80,7 @@ let queue1 = DispatchQueue.init(label: "queue1"）
 ```
 let queue1 = DispatchQueue.init(label: "queue1", qos: .default, attributes:.concurrent)
 ```
-###任务
+### 任务
 在Swift3中指派任务只需要在所指定的队列后使用相应的方法（.sync、.async），然后使用闭包传入任务即可。
 - 同步任务:会阻塞当前线程 (SYNC)
 ```
@@ -180,7 +180,7 @@ sync之前**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
 sync**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
 sync之后**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
 ```
-###延时执行
+### 延时执行
 之前在GCD中，想要指派一个任务延时执行，需要写的代码十分复杂。在swift3中很简洁。
 ```
         let delay = DispatchTime.now() + 3
@@ -190,7 +190,7 @@ sync之后**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
             print("hello world")
         }
 ```
-###队列组
+### 队列组
 队列组可以将很多队列添加到一个组里，这样做的好处是，当这个组里所有的任务都执行完了，队列组会通过一个方法通知我们。
 ```
         //队列组
@@ -220,12 +220,12 @@ sync之后**********/<NSThread: 0x60800026db80>{number = 3, name = (null)}
 2017-03-03 22:07:42.979 swiftBasic[8548:519943] group-02 - <NSThread: 0x6080000664c0>{number = 1, name = main}
 完成*****<NSThread: 0x6080000664c0>{number = 1, name = main}
 ```
-##NSOperation和NSOperationQueue
+## NSOperation和NSOperationQueue
 NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起来更好理解。`NSOperation`和`NSOperationQueue`分别对应GCD的`任务`和`队列`。操作步骤也很好理解：
 1. 将要执行的任务封装到一个`NSOperation`对象中。
 2. 将此任务添加到一个`NSOperationQueue`对象中。
 
-###添加任务
+### 添加任务
 `NSOperation`只是一个抽象类，所以不能封装任务。但它有2个子类用于封装任务。分别是：`NSInvocationOperation`和`NSBlockOperation`。创建一个 Operation后，需要调用`start`方法来启动任务，它会默认在当前队列**同步执行**。当然你也可以在中途取消一个任务，只需要调用其`cancel`方法即可。
 
 - BlockOperation
@@ -258,7 +258,7 @@ NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起
 第0次*****<NSThread: 0x600000271a00>{number = 3, name = (null)}
 第4次*****<NSThread: 0x60800007da00>{number = 1, name = main}
 ```
-###创建队列
+### 创建队列
 我们可以调用一个`NSOperation`对象的`start()`方法来启动这个任务，但是这样做他们默认是**同步执行**的。就算是`addExecutionBlock`方法，也会在**当前线程和其他线程**中执行，也就是说还是会占用当前线程。这是就要用到队列`NSOperationQueue`了。而且，按类型来说的话一共有两种类型：主队列、其他队列。只要添加到队列，会自动调用任务的`start()`方法.
 
 - 主队列
@@ -298,7 +298,7 @@ NSOperation是苹果公司对GCD的封装，完全面向对象，所以使用起
 
 `NSOperationQueue`还有一个添加任务的方法`- (void)addOperationWithBlock:(void (^)(void))block;`，这是不是和`GCD`差不多？这样就可以添加一个任务到队列中了，十分方便。
 
-###添加依赖
+### 添加依赖
 `NSOperation`有一个非常实用的功能，那就是添加依赖。比如有3个任务：A:从服务器上下载一张图片，B：给这张图片加个水印，C：把图片返回给服务器。这时就可以用到依赖了:
 ```
         let queue7 = OperationQueue.init()
@@ -371,7 +371,7 @@ objc_sync_exit(self)
   //后续要做的事
 ```
 
-##单例模式
+## 单例模式
 实现单例的方法已经很具体了，虽然有别的方法，但是一般都是用一个标准的方法了，这里多提一下在`Objective-C`中单例的实现方法
 **Objective-C**
 ```
@@ -403,7 +403,7 @@ class Tool: NSObject {
     private override init() {}
 }
 ```
-##从其他线程回到主线程的方法
+## 从其他线程回到主线程的方法
 我们都知道在其他线程操作完成后必须到主线程更新UI。所以，介绍完所有的多线程方案后，我们来看看有哪些方法可以回到主线程。
 - GCD
 ```
